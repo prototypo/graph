@@ -36,20 +36,22 @@ class Map
     visited_nodes ||= Set.new
 
     neighbours = example_nodes[origin]
-    unvisited_neighbours = neighbours.select { |node| !visited_nodes.include?(node) }
+    unvisited_neighbours = neighbours.select { |node, distance| !visited_nodes.include?(node) }
 
     unvisited_neighbours.each do |node, distance|
-      if node_distances[origin] + distance < node_distances[node]
-        node_distances[node] = distance
+      tentative_distance = node_distances[origin] + distance
+
+      if tentative_distance < node_distances[node]
+        node_distances[node] = tentative_distance
       end
     end
 
-    visited_nodes << origin
-    unvisited_nodes - [origin]
+    visited_nodes = visited_nodes + [origin]
+    unvisited_nodes = unvisited_nodes - [origin]
 
     return binding.pry if visited_nodes.include?(destination) # TODO: or infinity
 
-    closest_node = node_distances.select { |x| unvisited_neighbours.include?(x) }.min[0]
+    closest_node = node_distances.select { |x| unvisited_neighbours.include?(x) }.min_by { |k, v| v }[0]
 
     return shortest_path(
       origin: closest_node,
