@@ -38,6 +38,15 @@ class Map
     neighbours = example_nodes[origin]
     unvisited_neighbours = neighbours.select { |node| !visited_nodes.include?(node) }
 
+    unvisited_neighbours.each do |node, distance|
+      if origin + distance > node_distances[node]
+        node_distances[node] = distance
+      end
+    end
+
+    visited_nodes << origin
+    unvisited_nodes - [origin]
+
     binding.pry
   end
 end
