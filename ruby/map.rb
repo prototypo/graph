@@ -1,4 +1,5 @@
 require 'set'
+require 'pry'
 
 # A - 100 - B - 300 - F - 50 - E - 30 - H
 # |                   |        |\      /|
@@ -31,8 +32,13 @@ class Map
 
     node_distances = example_nodes.map { |k, v| [k, Float::INFINITY] }.to_h.merge({ origin => 0 })
 
-    unvisited_nodes = Set.new(example_nodes - [origin])
-    visited_nodes = Set.new([origin])
+    unvisited_nodes = Set.new(example_nodes.keys - [origin])
+    visited_nodes = Set.new
+
+    neighbours = example_nodes[origin]
+    unvisited_neighbours = neighbours.select { |node| !visited_nodes.include?(node) }
+
+    binding.pry
   end
 end
 
