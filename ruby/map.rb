@@ -26,20 +26,20 @@ class Map
     }
   end
 
-  def shortest_path(origin:, destination:)
+  def shortest_path(origin:, destination:, node_distances: nil, unvisited_nodes: nil, visited_nodes: nil)
     # Dijkstra's algorithm
     # https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm
 
-    node_distances = example_nodes.map { |k, v| [k, Float::INFINITY] }.to_h.merge({ origin => 0 })
+    node_distances ||= example_nodes.map { |k, v| [k, Float::INFINITY] }.to_h.merge({ origin => 0 })
 
-    unvisited_nodes = Set.new(example_nodes.keys - [origin])
-    visited_nodes = Set.new
+    unvisited_nodes ||= Set.new(example_nodes.keys - [origin])
+    visited_nodes ||= Set.new
 
     neighbours = example_nodes[origin]
     unvisited_neighbours = neighbours.select { |node| !visited_nodes.include?(node) }
 
     unvisited_neighbours.each do |node, distance|
-      if origin + distance > node_distances[node]
+      if node_distances[origin] + distance < node_distances[node]
         node_distances[node] = distance
       end
     end
@@ -47,7 +47,16 @@ class Map
     visited_nodes << origin
     unvisited_nodes - [origin]
 
-    binding.pry
+    return binding.pry if visited_nodes.include?(destination) # TODO: or infinity
+
+    closest_node = node_distances.select { |x| unvisited_neighbours.include?(x) }.min[0]
+
+    return shortest_path(
+      origin: closest_node,
+      destination: destination,
+      node_distances: node_distances,
+      unvisited_nodes: unvisited_nodes,
+      visited_nodes: visited_nodes)
   end
 end
 
