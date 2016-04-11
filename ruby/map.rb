@@ -9,3 +9,11 @@
 # |                   \        | /    \ |
 # |                    \- 70 - G       \|
 # C -------------- 200 ---------------- D
+
+class Map
+  def shortest_path(origin:, destination:)
+  end
+end
+
+map = Map.new
+map.shortest_path(origin: 'A', destination: 'D')
