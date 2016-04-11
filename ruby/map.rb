@@ -1,3 +1,4 @@
+require 'set'
 
 # A - 100 - B - 300 - F - 50 - E - 30 - H
 # |                   |        |\      /|
@@ -25,6 +26,13 @@ class Map
   end
 
   def shortest_path(origin:, destination:)
+    # Dijkstra's algorithm
+    # https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm
+
+    node_distances = example_nodes.map { |k, v| [k, Float::INFINITY] }.to_h.merge({ origin => 0 })
+
+    unvisited_nodes = Set.new(example_nodes - [origin])
+    visited_nodes = Set.new([origin])
   end
 end
 
