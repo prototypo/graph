@@ -21,7 +21,7 @@ class Map
       'E' => { 'F' => 50, 'H' => 30, 'G' => 150, 'D' => 80 },
       'G' => { 'F' => 70, 'E' => 150, 'H' => 50 },
       'H' => { 'E' => 30, 'G' => 50, 'D' => 90 },
-      'D' => { 'H' => 90, 'D' => 200 },
+      'D' => { 'H' => 90, 'C' => 200 },
       'C' => { 'D' => 200, 'A' => 30 }
     }
   end
@@ -38,6 +38,9 @@ class Map
     neighbours = example_nodes[origin]
     unvisited_neighbours = neighbours.select { |node, distance| !visited_nodes.include?(node) }
 
+    visited_nodes = visited_nodes + [origin]
+    unvisited_nodes = unvisited_nodes - [origin]
+
     unvisited_neighbours.each do |node, distance|
       tentative_distance = node_distances[origin] + distance
 
@@ -46,15 +49,12 @@ class Map
       end
     end
 
-    visited_nodes = visited_nodes + [origin]
-    unvisited_nodes = unvisited_nodes - [origin]
+    node_with_smallest_tentative_distance = node_distances.select { |x| unvisited_neighbours.include?(x) }.min_by { |k, v| v }[0]
 
-    return binding.pry if visited_nodes.include?(destination) # TODO: or infinity
-
-    closest_node = node_distances.select { |x| unvisited_neighbours.include?(x) }.min_by { |k, v| v }[0]
+    return binding.pry if visited_nodes.include?(destination) || node_with_smallest_tentative_distance == Float::INFINITY
 
     return shortest_path(
-      origin: closest_node,
+      origin: node_with_smallest_tentative_distance,
       destination: destination,
       node_distances: node_distances,
       unvisited_nodes: unvisited_nodes,
