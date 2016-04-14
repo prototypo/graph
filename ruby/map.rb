@@ -85,8 +85,27 @@ class Map
         end
       end
     end
+
+    start = 'A'
+    finish = 'E'
+
+    numbered_start = nodes_numbered[start]
+    numbered_finish = nodes_numbered[finish]
+
+    if !filled_next_matrix[numbered_start][numbered_finish]
+      return []
+    end
+
+    path = [start]
+
+    while start != finish do
+      start = filled_next_matrix[nodes_numbered[start]][numbered_finish]
+      path << start
+    end
+
+    return path
   end
 end
 
 map = Map.new
-map.floyd_warshall
+ap map.floyd_warshall
