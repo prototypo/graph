@@ -59,23 +59,24 @@ class Map
       end
     end
 
-    start = 'A'
-    finish = 'E'
+    shortest_path('A', 'E', example_nodes, next_matrix)
+  end
 
-    nodes_numbered = nodes_numbered(example_nodes)
+  def shortest_path(start, finish, nodes, next_matrix, path = [])
+    nodes_numbered = nodes_numbered(nodes)
 
     numbered_start = nodes_numbered[start]
     numbered_finish = nodes_numbered[finish]
 
     if !next_matrix[numbered_start][numbered_finish]
-      return []
-    end
-
-    path = [start]
-
-    while start != finish do
-      start = next_matrix[nodes_numbered[start]][numbered_finish]
-      path << start
+      return path + [finish]
+    else
+      return shortest_path(
+        next_matrix[nodes_numbered[start]][numbered_finish],
+        finish,
+        nodes,
+        next_matrix,
+        path + [start])
     end
 
     return path
