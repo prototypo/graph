@@ -1,4 +1,3 @@
-require 'set'
 require 'matrix'
 require 'awesome_print'
 require 'pry'
@@ -68,45 +67,7 @@ class Map
       end
     end
   end
-
-
-  def shortest_path(origin:, destination:, node_distances: nil, unvisited_nodes: nil, visited_nodes: nil)
-    # Dijkstra's algorithm
-    # https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm
-
-    node_distances ||= example_nodes.map { |k, v| [k, Float::INFINITY] }.to_h.merge({ origin => 0 })
-
-    unvisited_nodes ||= Set.new(example_nodes.keys - [origin])
-    visited_nodes ||= Set.new
-
-    neighbours = example_nodes[origin]
-    unvisited_neighbours = neighbours.select { |node, distance| !visited_nodes.include?(node) }
-
-    visited_nodes = visited_nodes + [origin]
-    unvisited_nodes = unvisited_nodes - [origin]
-
-    unvisited_neighbours.each do |node, distance|
-      tentative_distance = node_distances[origin] + distance
-
-      if tentative_distance < node_distances[node]
-        node_distances[node] = tentative_distance
-      end
-    end
-
-    node_with_smallest_tentative_distance = node_distances.select { |x| unvisited_neighbours.include?(x) }.min_by { |k, v| v }[0]
-
-    return binding.pry if visited_nodes.include?(destination) || node_with_smallest_tentative_distance == Float::INFINITY
-
-    return shortest_path(
-      origin: node_with_smallest_tentative_distance,
-      destination: destination,
-      node_distances: node_distances,
-      unvisited_nodes: unvisited_nodes,
-      visited_nodes: visited_nodes)
-  end
 end
 
 map = Map.new
-# map.shortest_path(origin: 'B', destination: 'H')
 map.floyd_warshall
-
