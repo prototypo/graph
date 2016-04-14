@@ -25,6 +25,17 @@ class Map
       'D' => { 'H' => 90, 'C' => 200, 'E' => 80 },
       'C' => { 'D' => 200, 'A' => 30 }
     }
+  def mirror_paths(nodes)
+    Hash[nodes.to_a.map do |node|
+      mergeable = Hash[nodes.select do |x|
+        nodes[x].keys.include?(node[0])
+      end.map do |k, v|
+        [k, v[node[0]]]
+      end]
+
+      [node[0], node[1].merge(mergeable)]
+    end]
+  end
 
     # {
     #   'A' => { 'B' => 100, 'C' => 30 },
