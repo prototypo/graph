@@ -41,46 +41,19 @@ class Map
   def floyd_warshall
     # https://en.wikipedia.org/wiki/Floyd–Warshall_algorithm
 
+    adjacency_matrix = adjacency_matrix(example_nodes)
+    next_matrix = next_matrix(example_nodes)
+
     number_of_nodes = example_nodes.keys.size
-
-    numbered_nodes = example_nodes.map.with_index.map { |(k, v), i| [i, k] }.to_h
-    nodes_numbered = numbered_nodes.invert
-
-    adjacency_matrix = Matrix.build(number_of_nodes) { Float::INFINITY }.to_a
-    next_matrix = Matrix.build(number_of_nodes) { nil }.to_a
-
-    filled_adjacency_matrix = adjacency_matrix.map.with_index do |row, row_i|
-      row.map.with_index do |x, col_i|
-        if row_i == col_i
-          0
-        else
-          if example_nodes[numbered_nodes[row_i]].has_key?(numbered_nodes[col_i])
-            example_nodes[numbered_nodes[row_i]][numbered_nodes[col_i]]
-          else
-            x
-          end
-        end
-      end
-    end
-
-    filled_next_matrix = next_matrix.map.with_index do |row, row_i|
-      row.map.with_index do |x, col_i|
-        if example_nodes[numbered_nodes[row_i]].has_key?(numbered_nodes[col_i])
-          numbered_nodes[col_i]
-        else
-          x
-        end
-      end
-    end
 
     number_of_nodes.times do |k|
       number_of_nodes.times do |i|
         number_of_nodes.times do |j|
-          alternate = filled_adjacency_matrix[i][k] + filled_adjacency_matrix[k][j]
-          if filled_adjacency_matrix[i][j] > alternate
-            filled_adjacency_matrix[i][j] = alternate
+          alternate = adjacency_matrix[i][k] + adjacency_matrix[k][j]
+          if adjacency_matrix[i][j] > alternate
+            adjacency_matrix[i][j] = alternate
 
-            filled_next_matrix[i][j] = filled_next_matrix[i][k]
+            next_matrix[i][j] = next_matrix[i][k]
           end
         end
       end
@@ -89,21 +62,65 @@ class Map
     start = 'A'
     finish = 'E'
 
+    nodes_numbered = nodes_numbered(example_nodes)
+
     numbered_start = nodes_numbered[start]
     numbered_finish = nodes_numbered[finish]
 
-    if !filled_next_matrix[numbered_start][numbered_finish]
+    if !next_matrix[numbered_start][numbered_finish]
       return []
     end
 
     path = [start]
 
     while start != finish do
-      start = filled_next_matrix[nodes_numbered[start]][numbered_finish]
+      start = next_matrix[nodes_numbered[start]][numbered_finish]
       path << start
     end
 
     return path
+  end
+
+  def adjacency_matrix(nodes)
+    adjacency_matrix = Matrix.build(nodes.keys.size) { Float::INFINITY }.to_a
+    numbered_nodes = numbered_nodes(nodes)
+
+    adjacency_matrix.map.with_index do |row, row_i|
+      row.map.with_index do |x, col_i|
+        if row_i == col_i
+          0
+        else
+          if nodes[numbered_nodes[row_i]].has_key?(numbered_nodes[col_i])
+            nodes[numbered_nodes[row_i]][numbered_nodes[col_i]]
+          else
+            x
+          end
+        end
+      end
+    end
+  end
+
+  def next_matrix(nodes)
+    next_matrix = Matrix.build(nodes.keys.size) { nil }.to_a
+    numbered_nodes = numbered_nodes(nodes)
+
+    next_matrix.map.with_index do |row, row_i|
+      row.map.with_index do |x, col_i|
+        if nodes[numbered_nodes[row_i]].has_key?(numbered_nodes[col_i])
+          numbered_nodes[col_i]
+        else
+          x
+        end
+      end
+    end
+  end
+
+  def numbered_nodes(nodes)
+    nodes.map.with_index.map { |(k, v), i| [i, k] }.to_h
+  end
+
+  def nodes_numbered(nodes)
+    numbered_nodes(nodes).invert
   end
 end
 
