@@ -1,4 +1,6 @@
 require 'set'
+require 'matrix'
+require 'awesome_print'
 require 'pry'
 
 # A - 100 - B - 300 - F - 50 - E - 30 - H
@@ -24,7 +26,49 @@ class Map
       'D' => { 'H' => 90, 'C' => 200 },
       'C' => { 'D' => 200, 'A' => 30 }
     }
+
+    # {
+    #   'A' => { 'B' => 100, 'C' => 30 },
+    #   'B' => { 'F' => 300 },
+    #   'F' => { 'E' => 50, 'G' => 70 },
+    #   'E' => { 'H' => 30, 'G' => 150, 'D' => 80 },
+    #   'G' => { 'H' => 50 },
+    #   'H' => { 'D' => 90 },
+    #   'D' => {  },
+    #   'C' => { 'D' => 200 }
+    # }
   end
+
+  def floyd_warshall
+    # https://en.wikipedia.org/wiki/Floyd–Warshall_algorithm
+
+    number_of_nodes = example_nodes.keys.size
+
+    numbered_nodes = example_nodes.map.with_index.map { |(k,v), i| [k, i] }.to_h
+
+    adjacency_matrix = Matrix.build(number_of_nodes) { Float::INFINITY }.to_a
+
+    example_nodes.each do |k, v|
+      i = numbered_nodes[k]
+      adjacency_matrix[i][i] = 0
+
+      example_nodes[k].each do |n, n2|
+        adjacency_matrix[i][numbered_nodes[n]] = n2
+      end
+    end
+
+    number_of_nodes.times do |k|
+      number_of_nodes.times do |i|
+        number_of_nodes.times do |j|
+          alternate = m[i][k] + m[k][j]
+          if m[i][j] > alternate
+            m[i][j] = alternate
+          end
+        end
+      end
+    end
+  end
+
 
   def shortest_path(origin:, destination:, node_distances: nil, unvisited_nodes: nil, visited_nodes: nil)
     # Dijkstra's algorithm
@@ -63,4 +107,6 @@ class Map
 end
 
 map = Map.new
-map.shortest_path(origin: 'A', destination: 'D')
+# map.shortest_path(origin: 'B', destination: 'H')
+map.floyd_warshall
+
