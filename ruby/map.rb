@@ -20,18 +20,6 @@ class Map
     @nodes = mirror_paths(nodes)
   end
 
-  def mirror_paths(nodes)
-    Hash[nodes.to_a.map do |node|
-      mergeable = Hash[nodes.select do |x|
-        nodes[x].keys.include?(node[0])
-      end.map do |k, v|
-        [k, v[node[0]]]
-      end]
-
-      [node[0], node[1].merge(mergeable)]
-    end]
-  end
-
   def process_nodes
     @adjacency_matrix = adjacency_matrix(@nodes)
     @next_matrix = next_matrix(@nodes)
@@ -82,6 +70,8 @@ class Map
     find_shortest_path(start, finish, @nodes, @next_matrix)
   end
 
+  private
+
   def find_shortest_path(start, finish, nodes, next_matrix, path = [])
     nodes_numbered = nodes_numbered(nodes)
 
@@ -100,6 +90,18 @@ class Map
     end
 
     return path
+  end
+
+  def mirror_paths(nodes)
+    Hash[nodes.to_a.map do |node|
+      mergeable = Hash[nodes.select do |x|
+        nodes[x].keys.include?(node[0])
+      end.map do |k, v|
+        [k, v[node[0]]]
+      end]
+
+      [node[0], node[1].merge(mergeable)]
+    end]
   end
 
   def adjacency_matrix(nodes)
