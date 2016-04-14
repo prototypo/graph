@@ -43,16 +43,22 @@ class Map
 
     number_of_nodes = example_nodes.keys.size
 
-    numbered_nodes = example_nodes.map.with_index.map { |(k,v), i| [k, i] }.to_h
+    numbered_nodes = example_nodes.map.with_index.map { |(k, v), i| [i, k] }.to_h
+    nodes_numbered = numbered_nodes.invert
 
     adjacency_matrix = Matrix.build(number_of_nodes) { Float::INFINITY }.to_a
 
-    example_nodes.each do |k, v|
-      i = numbered_nodes[k]
-      adjacency_matrix[i][i] = 0
-
-      example_nodes[k].each do |n, n2|
-        adjacency_matrix[i][numbered_nodes[n]] = n2
+    filled_adjacency_matrix = adjacency_matrix.map.with_index do |row, row_i|
+      row.map.with_index do |x, col_i|
+        if row_i == col_i
+          0
+        else
+          if example_nodes[numbered_nodes[row_i]].has_key?(numbered_nodes[col_i])
+            example_nodes[numbered_nodes[row_i]][numbered_nodes[col_i]]
+          else
+            x
+          end
+        end
       end
     end
 
