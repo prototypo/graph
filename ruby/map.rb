@@ -47,6 +47,7 @@ class Map
     nodes_numbered = numbered_nodes.invert
 
     adjacency_matrix = Matrix.build(number_of_nodes) { Float::INFINITY }.to_a
+    next_matrix = Matrix.build(number_of_nodes) { nil }.to_a
 
     filled_adjacency_matrix = adjacency_matrix.map.with_index do |row, row_i|
       row.map.with_index do |x, col_i|
@@ -62,12 +63,24 @@ class Map
       end
     end
 
+    filled_next_matrix = next_matrix.map.with_index do |row, row_i|
+      row.map.with_index do |x, col_i|
+        if example_nodes[numbered_nodes[row_i]].has_key?(numbered_nodes[col_i])
+          numbered_nodes[col_i]
+        else
+          x
+        end
+      end
+    end
+
     number_of_nodes.times do |k|
       number_of_nodes.times do |i|
         number_of_nodes.times do |j|
-          alternate = adjacency_matrix[i][k] + adjacency_matrix[k][j]
-          if adjacency_matrix[i][j] > alternate
-            adjacency_matrix[i][j] = alternate
+          alternate = filled_adjacency_matrix[i][k] + filled_adjacency_matrix[k][j]
+          if filled_adjacency_matrix[i][j] > alternate
+            filled_adjacency_matrix[i][j] = alternate
+
+            filled_next_matrix[i][j] = filled_next_matrix[i][k]
           end
         end
       end
