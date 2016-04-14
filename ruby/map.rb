@@ -59,9 +59,9 @@ class Map
     number_of_nodes.times do |k|
       number_of_nodes.times do |i|
         number_of_nodes.times do |j|
-          alternate = m[i][k] + m[k][j]
-          if m[i][j] > alternate
-            m[i][j] = alternate
+          alternate = adjacency_matrix[i][k] + adjacency_matrix[k][j]
+          if adjacency_matrix[i][j] > alternate
+            adjacency_matrix[i][j] = alternate
           end
         end
       end
