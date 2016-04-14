@@ -14,17 +14,12 @@ require 'pry'
 # C -------------- 200 ---------------- D
 
 class Map
-  def example_nodes
-    {
-      'A' => { 'B' => 100, 'C' => 30 },
-      'B' => { 'A' => 100, 'F' => 300 },
-      'F' => { 'B' => 300, 'E' => 50, 'G' => 70 },
-      'E' => { 'F' => 50, 'H' => 30, 'G' => 150, 'D' => 80 },
-      'G' => { 'F' => 70, 'E' => 150, 'H' => 50 },
-      'H' => { 'E' => 30, 'G' => 50, 'D' => 90 },
-      'D' => { 'H' => 90, 'C' => 200, 'E' => 80 },
-      'C' => { 'D' => 200, 'A' => 30 }
-    }
+  attr_accessor :nodes, :adjacency_matrix, :next_matrix
+
+  def load_nodes(nodes)
+    @nodes = mirror_paths(nodes)
+  end
+
   def mirror_paths(nodes)
     Hash[nodes.to_a.map do |node|
       mergeable = Hash[nodes.select do |x|
@@ -37,43 +32,57 @@ class Map
     end]
   end
 
-    # {
-    #   'A' => { 'B' => 100, 'C' => 30 },
-    #   'B' => { 'F' => 300 },
-    #   'F' => { 'E' => 50, 'G' => 70 },
-    #   'E' => { 'H' => 30, 'G' => 150, 'D' => 80 },
-    #   'G' => { 'H' => 50 },
-    #   'H' => { 'D' => 90 },
-    #   'D' => {  },
-    #   'C' => { 'D' => 200 }
-    # }
+  def process_nodes
+    @adjacency_matrix = adjacency_matrix(@nodes)
+    @next_matrix = next_matrix(@nodes)
   end
 
-  def floyd_warshall
+  def self.example_nodes
+    # {
+    #   'A' => { 'B' => 100, 'C' => 30 },
+    #   'B' => { 'A' => 100, 'F' => 300 },
+    #   'F' => { 'B' => 300, 'E' => 50, 'G' => 70 },
+    #   'E' => { 'F' => 50, 'H' => 30, 'G' => 150, 'D' => 80 },
+    #   'G' => { 'F' => 70, 'E' => 150, 'H' => 50 },
+    #   'H' => { 'E' => 30, 'G' => 50, 'D' => 90 },
+    #   'D' => { 'H' => 90, 'C' => 200, 'E' => 80 },
+    #   'C' => { 'D' => 200, 'A' => 30 }
+    # }
+
+    {
+      'A' => { 'B' => 100, 'C' => 30 },
+      'B' => { 'F' => 300 },
+      'F' => { 'E' => 50, 'G' => 70 },
+      'E' => { 'H' => 30, 'G' => 150, 'D' => 80 },
+      'G' => { 'H' => 50 },
+      'H' => { 'D' => 90 },
+      'D' => {  },
+      'C' => { 'D' => 200 }
+    }
+  end
+
+  def shortest_path(start, finish)
     # https://en.wikipedia.org/wiki/Floyd–Warshall_algorithm
 
-    adjacency_matrix = adjacency_matrix(example_nodes)
-    next_matrix = next_matrix(example_nodes)
-
-    number_of_nodes = example_nodes.keys.size
+    number_of_nodes = @nodes.keys.size
 
     number_of_nodes.times do |k|
       number_of_nodes.times do |i|
         number_of_nodes.times do |j|
-          alternate = adjacency_matrix[i][k] + adjacency_matrix[k][j]
-          if adjacency_matrix[i][j] > alternate
-            adjacency_matrix[i][j] = alternate
+          alternate = @adjacency_matrix[i][k] + @adjacency_matrix[k][j]
+          if @adjacency_matrix[i][j] > alternate
+            @adjacency_matrix[i][j] = alternate
 
-            next_matrix[i][j] = next_matrix[i][k]
+            @next_matrix[i][j] = @next_matrix[i][k]
           end
         end
       end
     end
 
-    shortest_path('A', 'E', example_nodes, next_matrix)
+    find_shortest_path(start, finish, @nodes, @next_matrix)
   end
 
-  def shortest_path(start, finish, nodes, next_matrix, path = [])
+  def find_shortest_path(start, finish, nodes, next_matrix, path = [])
     nodes_numbered = nodes_numbered(nodes)
 
     numbered_start = nodes_numbered[start]
@@ -82,7 +91,7 @@ class Map
     if !next_matrix[numbered_start][numbered_finish]
       return path + [finish]
     else
-      return shortest_path(
+      return find_shortest_path(
         next_matrix[nodes_numbered[start]][numbered_finish],
         finish,
         nodes,
@@ -137,4 +146,7 @@ class Map
 end
 
 map = Map.new
-ap map.floyd_warshall
+map.load_nodes(Map.example_nodes)
+map.process_nodes
+
+ap map.shortest_path('A', 'E')
