@@ -18,8 +18,20 @@ class Map
 
   def load_nodes(nodes, merge = false)
     if merge
-      @nodes = @nodes.merge(mirror_paths(nodes))
+      if nodes.values.first == nil
+        # Deleting nodes
+        @nodes = @nodes.select { |k, v| k != nodes.keys.first }
+        @nodes = @nodes.map { |k, v| [k, v.select { |sk, sv| sk != nodes.keys.first }] }.to_h
+
+      elsif nodes.select { |k, v| v.values.any? { |x| x == nil } }.size > 0
+        # Deleting paths
+        @nodes = @nodes.map { |k, v| [k, v.reject { |sk, sv| sk == nodes.keys.first || sk == nodes.values.first.keys.first }] }.to_h
+      else
+        # Modifying paths
+        @nodes = @nodes.merge(mirror_paths(nodes)) { |k, old_nodes, new_nodes| old_nodes.merge(new_nodes) }
+      end
     else
+      # Fresh loading nodes and paths
       @nodes = mirror_paths(normalise_nodes(nodes))
     end
   end
