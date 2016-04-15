@@ -82,6 +82,10 @@ class Map
     nodes.map { |k, v| [k => v] }.flatten
   end
 
+  def all_nodes
+    (@nodes.keys + @nodes.values.map { |x| x.map { |k, v| k } }).flatten.uniq
+  end
+
   private
 
   def find_shortest_path(start, finish, nodes, next_matrix, path = [])

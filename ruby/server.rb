@@ -21,7 +21,7 @@ post '/' do
     return @@map.nodes.to_json
 
   elsif data['start'] && data['end']
-    if @@map.nodes.keys.include?(data['start']) && @@map.nodes.keys.include?(data['end'])
+    if @@map.all_nodes.include?(data['start']) && @@map.all_nodes.include?(data['end'])
       return { 'distance' => @@map.shortest_distance(data['start'], data['end']) }.to_json
     else
       status 400
