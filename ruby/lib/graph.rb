@@ -13,7 +13,7 @@ require 'pry'
 # |                    \- 70 - G       \|
 # C -------------- 200 ---------------- D
 
-class Map
+class Graph
   attr_accessor :nodes, :adjacency_matrix, :next_matrix
 
   def load_nodes(nodes, merge = false)
@@ -179,8 +179,8 @@ class Map
   end
 end
 
-# map = Map.new
-# map.load_nodes(Map.example_nodes)
+# map = Graph.new
+# map.load_nodes(Graph.example_nodes)
 # map.process_nodes
 
 # ap map.shortest_path('A', 'E')

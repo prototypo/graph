@@ -1,11 +1,11 @@
 require 'sinatra'
 require 'json'
-require './lib/map'
+require './lib/graph'
 require 'awesome_print'
 
 before do
   if !defined?(@@map)
-    @@map = Map.new
+    @@map = Graph.new
     @@map.load_nodes([])
   end
 end
