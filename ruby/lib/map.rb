@@ -18,7 +18,7 @@ class Map
 
   def load_nodes(nodes, merge = false)
     if merge
-      @nodes = mirror_paths(@nodes.merge(nodes))
+      @nodes = @nodes.merge(mirror_paths(nodes))
     else
       @nodes = mirror_paths(normalise_nodes(nodes))
     end
@@ -82,8 +82,8 @@ class Map
     nodes.map { |k, v| [k => v] }.flatten
   end
 
-  def all_nodes
-    (@nodes.keys + @nodes.values.map { |x| x.map { |k, v| k } }).flatten.uniq
+  def all_nodes(nodes)
+    (nodes.keys + nodes.values.map { |x| x.map { |k, v| k } }).flatten.uniq
   end
 
   private
@@ -107,7 +107,9 @@ class Map
   end
 
   def mirror_paths(nodes)
-    Hash[nodes.to_a.map do |node|
+    burried_nodes = Hash[all_nodes(nodes).map { |x| [x, {}] }]
+
+    Hash[burried_nodes.merge(nodes).to_a.map do |node|
       mergeable = Hash[nodes.select do |x|
         nodes[x].keys.include?(node[0])
       end.map do |k, v|
