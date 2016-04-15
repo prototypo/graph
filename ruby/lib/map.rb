@@ -78,6 +78,10 @@ class Map
     @adjacency_matrix[nodes_numbered[start]][nodes_numbered[finish]]
   end
 
+  def denormalise_nodes(nodes)
+    nodes.map { |k, v| [k => v] }.flatten
+  end
+
   private
 
   def find_shortest_path(start, finish, nodes, next_matrix, path = [])
@@ -157,18 +161,21 @@ class Map
   end
 end
 
-map = Map.new
-map.load_nodes(Map.example_nodes)
-map.process_nodes
+# map = Map.new
+# map.load_nodes(Map.example_nodes)
+# map.process_nodes
 
-ap map.shortest_path('A', 'E')
-ap map.shortest_distance('A', 'E')
+# ap map.shortest_path('A', 'E')
+# ap map.shortest_distance('A', 'E')
 
-ap map.shortest_path('A', 'C')
-ap map.shortest_distance('A', 'C')
+# ap map.shortest_path('A', 'C')
+# ap map.shortest_distance('A', 'C')
 
-ap map.shortest_path('D', 'A')
-ap map.shortest_distance('D', 'A')
+# ap map.shortest_path('D', 'A')
+# ap map.shortest_distance('D', 'A')
 
-ap map.shortest_path('A', 'B')
-ap map.shortest_distance('A', 'B')
+# ap map.shortest_path('A', 'B')
+# ap map.shortest_distance('A', 'B')
+
+# TODO: Handle sparse node ------X
+# TODO: Check without D key

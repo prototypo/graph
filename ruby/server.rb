@@ -36,5 +36,5 @@ post '/' do
 end
 
 get '/' do
-  @@map.nodes.ai(html: true)
+  @@map.denormalise_nodes(@@map.nodes).ai(html: true)
 end
