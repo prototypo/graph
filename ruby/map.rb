@@ -23,33 +23,7 @@ class Map
   def process_nodes
     @adjacency_matrix = adjacency_matrix(@nodes)
     @next_matrix = next_matrix(@nodes)
-  end
 
-  def self.example_nodes
-    # {
-    #   'A' => { 'B' => 100, 'C' => 30 },
-    #   'B' => { 'A' => 100, 'F' => 300 },
-    #   'F' => { 'B' => 300, 'E' => 50, 'G' => 70 },
-    #   'E' => { 'F' => 50, 'H' => 30, 'G' => 150, 'D' => 80 },
-    #   'G' => { 'F' => 70, 'E' => 150, 'H' => 50 },
-    #   'H' => { 'E' => 30, 'G' => 50, 'D' => 90 },
-    #   'D' => { 'H' => 90, 'C' => 200, 'E' => 80 },
-    #   'C' => { 'D' => 200, 'A' => 30 }
-    # }
-
-    {
-      'A' => { 'B' => 100, 'C' => 30 },
-      'B' => { 'F' => 300 },
-      'F' => { 'E' => 50, 'G' => 70 },
-      'E' => { 'H' => 30, 'G' => 150, 'D' => 80 },
-      'G' => { 'H' => 50 },
-      'H' => { 'D' => 90 },
-      'D' => {  },
-      'C' => { 'D' => 200 }
-    }
-  end
-
-  def shortest_path(start, finish)
     # https://en.wikipedia.org/wiki/Floyd–Warshall_algorithm
 
     number_of_nodes = @nodes.keys.size
@@ -66,8 +40,38 @@ class Map
         end
       end
     end
+  end
 
+  # def floyd_warshall(i, j, k)
+  #   if k == 0
+  #     return @adjacency_matrix[i][j]
+  #   else
+  #     p [i, j, k]
+  #     return [floyd_warshall(i, j, k), floyd_warshall(i, k + 1, k) + floyd_warshall(k + 1, j, k)].min
+  #   end
+  # end
+
+  def self.example_nodes
+    {
+      'A' => { 'B' => 100, 'C' => 30 },
+      'B' => { 'F' => 300 },
+      'F' => { 'E' => 50, 'G' => 70 },
+      'E' => { 'H' => 30, 'G' => 150, 'D' => 80 },
+      'G' => { 'H' => 50 },
+      'H' => { 'D' => 90 },
+      'D' => {  },
+      'C' => { 'D' => 200 }
+    }
+  end
+
+  def shortest_path(start, finish)
     find_shortest_path(start, finish, @nodes, @next_matrix)
+  end
+
+  def shortest_distance(start, finish)
+    nodes_numbered = nodes_numbered(@nodes)
+
+    @adjacency_matrix[nodes_numbered[start]][nodes_numbered[finish]]
   end
 
   private
@@ -82,14 +86,12 @@ class Map
       return path + [finish]
     else
       return find_shortest_path(
-        next_matrix[nodes_numbered[start]][numbered_finish],
+        next_matrix[numbered_start][numbered_finish],
         finish,
         nodes,
         next_matrix,
         path + [start])
     end
-
-    return path
   end
 
   def mirror_paths(nodes)
@@ -152,3 +154,13 @@ map.load_nodes(Map.example_nodes)
 map.process_nodes
 
 ap map.shortest_path('A', 'E')
+ap map.shortest_distance('A', 'E')
+
+ap map.shortest_path('A', 'C')
+ap map.shortest_distance('A', 'C')
+
+ap map.shortest_path('D', 'A')
+ap map.shortest_distance('D', 'A')
+
+ap map.shortest_path('A', 'B')
+ap map.shortest_distance('A', 'B')
