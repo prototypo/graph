@@ -16,8 +16,12 @@ require 'pry'
 class Map
   attr_accessor :nodes, :adjacency_matrix, :next_matrix
 
-  def load_nodes(nodes)
-    @nodes = mirror_paths(normalise_nodes(nodes))
+  def load_nodes(nodes, merge = false)
+    if merge
+      @nodes = mirror_paths(@nodes.merge(nodes))
+    else
+      @nodes = mirror_paths(normalise_nodes(nodes))
+    end
   end
 
   def process_nodes
@@ -62,10 +66,6 @@ class Map
       { 'D' => {  } },
       { 'C' => { 'D' => 200 } }
     ]
-  end
-
-  def merge_nodes(nodes)
-    nodes.map { |x, (k, v)| [k, v]}
   end
 
   def shortest_path(start, finish)
