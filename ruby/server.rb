@@ -11,7 +11,13 @@ before do
 end
 
 post '/' do
-  data = JSON.parse(request.body.read)
+  begin
+    data = JSON.parse(request.form_data? ? params['data'] : request.body.read)
+  rescue
+    status 400
+
+    return 'Submission Error'
+  end
 
   if data['map']
     @@map.load_nodes(data['map'])
@@ -24,6 +30,8 @@ post '/' do
       return { 'distance' => @@map.shortest_distance(data['start'], data['end']) }.to_json
     else
       status 400
+
+      return 'Submission Error'
     end
 
   else
@@ -35,5 +43,5 @@ post '/' do
 end
 
 get '/' do
-  @@map.denormalise_nodes(@@map.nodes).ai(html: true)
+  erb :index
 end

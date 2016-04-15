@@ -1,0 +1,13 @@
+<html>
+<body>
+<form action="/" method="POST">
+<textarea style="width: 100%; height: 200px" name="data"></textarea>
+<input type="submit" value="Submit">
+</form>
+<p>
+<p>
+<h3>Result</h3>
+<hr />
+<%= @@map.denormalise_nodes(@@map.nodes).ai(html: true) %>
+</body>
+</html>
