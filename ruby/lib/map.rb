@@ -17,7 +17,7 @@ class Map
   attr_accessor :nodes, :adjacency_matrix, :next_matrix
 
   def load_nodes(nodes)
-    @nodes = mirror_paths(nodes)
+    @nodes = mirror_paths(normalise_nodes(nodes))
   end
 
   def process_nodes
@@ -52,16 +52,20 @@ class Map
   # end
 
   def self.example_nodes
-    {
-      'A' => { 'B' => 100, 'C' => 30 },
-      'B' => { 'F' => 300 },
-      'F' => { 'E' => 50, 'G' => 70 },
-      'E' => { 'H' => 30, 'G' => 150, 'D' => 80 },
-      'G' => { 'H' => 50 },
-      'H' => { 'D' => 90 },
-      'D' => {  },
-      'C' => { 'D' => 200 }
-    }
+    [
+      { 'A' => { 'B' => 100, 'C' => 30 } },
+      { 'B' => { 'F' => 300 } },
+      { 'F' => { 'E' => 50, 'G' => 70 } },
+      { 'E' => { 'H' => 30, 'G' => 150, 'D' => 80 } },
+      { 'G' => { 'H' => 50 } },
+      { 'H' => { 'D' => 90 } },
+      { 'D' => {  } },
+      { 'C' => { 'D' => 200 } }
+    ]
+  end
+
+  def merge_nodes(nodes)
+    nodes.map { |x, (k, v)| [k, v]}
   end
 
   def shortest_path(start, finish)
@@ -104,6 +108,10 @@ class Map
 
       [node[0], node[1].merge(mergeable)]
     end]
+  end
+
+  def normalise_nodes(nodes)
+    Hash[nodes.map { |x| [x.keys.first, x.values.first] }]
   end
 
   def adjacency_matrix(nodes)
