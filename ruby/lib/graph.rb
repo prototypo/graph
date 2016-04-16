@@ -53,23 +53,6 @@ class Graph
     end
   end
 
-  def self.example_nodes
-    [
-      { 'A' => { 'B' => 100, 'C' => 30 } },
-      { 'B' => { 'F' => 300 } },
-      { 'F' => { 'E' => 50, 'G' => 70 } },
-      { 'E' => { 'H' => 30, 'G' => 150, 'D' => 80 } },
-      { 'G' => { 'H' => 50 } },
-      { 'H' => { 'D' => 90 } },
-      { 'D' => {  } },
-      { 'C' => { 'D' => 200 } }
-    ]
-  end
-
-  def shortest_path(start, finish)
-    find_shortest_path(start, finish, @nodes, @next_matrix)
-  end
-
   def shortest_distance(nodes, start, finish)
     nodes_numbered = nodes_numbered(nodes)
     numbered_nodes = numbered_nodes(nodes)
@@ -82,24 +65,6 @@ class Graph
   end
 
   private
-
-  def find_shortest_path(start, finish, nodes, next_matrix, path = [])
-    nodes_numbered = nodes_numbered(nodes)
-
-    numbered_start = nodes_numbered[start]
-    numbered_finish = nodes_numbered[finish]
-
-    if !next_matrix[numbered_start][numbered_finish]
-      return path + [finish]
-    else
-      return find_shortest_path(
-        next_matrix[numbered_start][numbered_finish],
-        finish,
-        nodes,
-        next_matrix,
-        path + [start])
-    end
-  end
 
   def mirror_paths(nodes)
     burried_nodes = Hash[nodes.keys.map { |x| [x, {}] }]
@@ -137,21 +102,6 @@ class Graph
     end
   end
 
-  def next_matrix(nodes)
-    next_matrix = Matrix.build(nodes.keys.size) { nil }.to_a
-    numbered_nodes = numbered_nodes(nodes)
-
-    next_matrix.map.with_index do |row, row_i|
-      row.map.with_index do |x, col_i|
-        if nodes[numbered_nodes[row_i]].has_key?(numbered_nodes[col_i])
-          numbered_nodes[col_i]
-        else
-          x
-        end
-      end
-    end
-  end
-
   def numbered_nodes(nodes)
     nodes.map.with_index.map { |(k, v), i| [i, k] }.to_h
   end
@@ -160,22 +110,3 @@ class Graph
     numbered_nodes(nodes).invert
   end
 end
-
-# map = Graph.new
-# map.load_nodes(Graph.example_nodes)
-# map.process_nodes
-
-# ap map.shortest_path('A', 'E')
-# ap map.shortest_distance('A', 'E')
-
-# ap map.shortest_path('A', 'C')
-# ap map.shortest_distance('A', 'C')
-
-# ap map.shortest_path('D', 'A')
-# ap map.shortest_distance('D', 'A')
-
-# ap map.shortest_path('A', 'B')
-# ap map.shortest_distance('A', 'B')
-
-# TODO: Handle sparse node ------X
-# TODO: Check without D key
