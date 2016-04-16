@@ -14,7 +14,7 @@ require 'pry'
 # C -------------- 200 ---------------- D
 
 class Graph
-  attr_accessor :nodes, :adjacency_matrix, :next_matrix
+  attr_accessor :nodes
 
   def load_nodes(nodes, merge = false)
     if merge
@@ -70,10 +70,8 @@ class Graph
     find_shortest_path(start, finish, @nodes, @next_matrix)
   end
 
-  def shortest_distance(start, finish)
-    nodes_numbered = nodes_numbered(@nodes)
-
-    @adjacency_matrix[nodes_numbered[start]][nodes_numbered[finish]]
+  def shortest_distance(nodes, start, finish)
+    floyd_warshall(adjacency_matrix(nodes), nodes_numbered(nodes)[start], nodes_numbered(nodes)[finish])
   end
 
   def denormalise_nodes(nodes)
@@ -101,7 +99,7 @@ class Graph
   end
 
   def mirror_paths(nodes)
-    burried_nodes = Hash[all_nodes(nodes).map { |x| [x, {}] }]
+    burried_nodes = Hash[nodes.keys.map { |x| [x, {}] }]
 
     Hash[burried_nodes.merge(nodes).to_a.map do |node|
       mergeable = Hash[nodes.select do |x|
