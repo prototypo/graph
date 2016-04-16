@@ -40,32 +40,25 @@ class Graph
     @adjacency_matrix = adjacency_matrix(@nodes)
     @next_matrix = next_matrix(@nodes)
 
-    # https://en.wikipedia.org/wiki/Floyd–Warshall_algorithm
-
-    number_of_nodes = @nodes.keys.size
-
-    number_of_nodes.times do |k|
-      number_of_nodes.times do |i|
-        number_of_nodes.times do |j|
-          alternate = @adjacency_matrix[i][k] + @adjacency_matrix[k][j]
-          if @adjacency_matrix[i][j] > alternate
-            @adjacency_matrix[i][j] = alternate
-
-            @next_matrix[i][j] = @next_matrix[i][k]
-          end
-        end
-      end
-    end
+    floyd_warshall(@adjacency_matrix, nodes_numbered(@nodes)['A'], nodes_numbered(@nodes)['D'])
   end
 
-  # def floyd_warshall(i, j, k)
-  #   if k == 0
-  #     return @adjacency_matrix[i][j]
-  #   else
-  #     p [i, j, k]
-  #     return [floyd_warshall(i, j, k), floyd_warshall(i, k + 1, k) + floyd_warshall(k + 1, j, k)].min
-  #   end
-  # end
+  # https://en.wikipedia.org/wiki/Floyd–Warshall_algorithm
+  def floyd_warshall(graph, i, j)
+    if i == j
+      return 0
+    end
+
+    if i == j - 1
+      return graph[i][j]
+    end
+
+    return ((i + 1)...j).reduce(Float::INFINITY) do |max, k|
+      x = [graph[i][j], floyd_warshall(graph, i, k) + floyd_warshall(graph, k, j)].min
+
+      x < max ? x : max
+    end
+  end
 
   def self.example_nodes
     [
