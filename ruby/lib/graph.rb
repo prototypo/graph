@@ -36,13 +36,6 @@ class Graph
     end
   end
 
-  def process_nodes
-    @adjacency_matrix = adjacency_matrix(@nodes)
-    @next_matrix = next_matrix(@nodes)
-
-    floyd_warshall(@adjacency_matrix, nodes_numbered(@nodes)['A'], nodes_numbered(@nodes)['D'])
-  end
-
   # https://en.wikipedia.org/wiki/Floyd–Warshall_algorithm
   def floyd_warshall(graph, i, j)
     if i == j
@@ -85,10 +78,6 @@ class Graph
 
   def denormalise_nodes(nodes)
     nodes.map { |k, v| [k => v] }.flatten
-  end
-
-  def all_nodes(nodes)
-    (nodes.keys + nodes.values.map { |x| x.map { |k, v| k } }).flatten.uniq
   end
 
   private
