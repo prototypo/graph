@@ -6,16 +6,12 @@ class Graph
   def process_nodes(nodes, existing_nodes = nil)
     if existing_nodes
       if nodes.values.first == nil
-        # Deleting nodes
-        @nodes = @nodes.select { |k, v| k != nodes.keys.first }
-        @nodes = @nodes.map { |k, v| [k, v.select { |sk, sv| sk != nodes.keys.first }] }.to_h
+        delete_node(nodes, existing_nodes)
 
       elsif nodes.select { |k, v| v.values.any? { |x| x == nil } }.size > 0
-        # Deleting paths
-        @nodes = @nodes.map { |k, v| [k, v.reject { |sk, sv| sk == nodes.keys.first || sk == nodes.values.first.keys.first }] }.to_h
+        delete_path(nodes, existing_nodes)
       else
-        # Modifying paths
-        existing_nodes.merge(mirror_paths(nodes)) { |k, old_nodes, new_nodes| old_nodes.merge(new_nodes) }
+        update_path(nodes, existing_nodes)
       end
     else
       # Fresh loading nodes and paths
@@ -95,5 +91,18 @@ class Graph
 
   def nodes_numbered(nodes)
     numbered_nodes(nodes).invert
+  end
+
+  def delete_node(nodes, existing_nodes)
+    existing_nodes.select { |k, v| k != nodes.keys.first }.
+      map { |k, v| [k, v.select { |sk, sv| sk != nodes.keys.first }] }.to_h
+  end
+
+  def delete_path(nodes, existing_nodes)
+    existing_nodes.map { |k, v| [k, v.reject { |sk, sv| sk == nodes.keys.first || sk == nodes.values.first.keys.first }] }.to_h
+  end
+
+  def update_path(nodes, existing_nodes)
+    existing_nodes.merge(mirror_paths(nodes)) { |k, old_nodes, new_nodes| old_nodes.merge(new_nodes) }
   end
 end

@@ -132,18 +132,25 @@ class TestGraph < MiniTest::Unit::TestCase
         "C" => { "D" => 200, "A" => 30 }
       }
 
-    update = {
-        "A" => { "B" => 20, "C" => 30 },
-        "B" => { "F" => 300, "A" => 100 },
+    assert_equal fresh_load, @graph.process_nodes(example_nodes)
+  end
+
+  def test_delete_node
+    deleted_node = {
+        "B" => { "F" => 300 },
         "F" => { "E" => 50, "G" => 70, "B" => 300 },
         "E" => { "H" => 30, "G" => 150, "D" => 80, "F" => 50 },
         "G" => { "H" => 50, "F" => 70, "E" => 150 },
         "H" => { "D" => 90, "E" => 30, "G" => 50 },
         "D" => { "E" => 80, "H" => 90, "C" => 200 },
-        "C" => { "D" => 200, "A" => 30 }
+        "C" => { "D" => 200 }
       }
 
-    delete_path = {
+    assert_equal deleted_node, @graph.process_nodes({ 'A' => nil }, @graph.process_nodes(example_nodes))
+  end
+
+  def test_delete_path
+    deleted_path = {
         "A" => { "C" => 30 },
         "B" => { "F" => 300 },
         "F" => { "E" => 50, "G" => 70, "B" => 300 },
@@ -154,28 +161,21 @@ class TestGraph < MiniTest::Unit::TestCase
         "C" => { "D" => 200, "A" => 30 }
       }
 
-    delete_node = {
-        "B" => { "F" => 300 },
+    assert_equal deleted_path, @graph.process_nodes({ 'A' => { 'B' => nil } }, @graph.process_nodes(example_nodes))
+  end
+
+  def test_update_path
+    updated_path = {
+        "A" => { "B" => 20, "C" => 30 },
+        "B" => { "F" => 300, "A" => 100 },
         "F" => { "E" => 50, "G" => 70, "B" => 300 },
         "E" => { "H" => 30, "G" => 150, "D" => 80, "F" => 50 },
         "G" => { "H" => 50, "F" => 70, "E" => 150 },
         "H" => { "D" => 90, "E" => 30, "G" => 50 },
         "D" => { "E" => 80, "H" => 90, "C" => 200 },
-        "C" => { "D" => 200 }
+        "C" => { "D" => 200, "A" => 30 }
       }
 
-    @graph.nodes = @graph.process_nodes(example_nodes)
-
-    # Fresh load
-    assert_equal fresh_load, @graph.nodes
-
-    # Update
-    assert_equal update, @graph.process_nodes({ 'A' => { 'B' => 20 } }, @graph.nodes)
-
-    # Delete path
-    assert_equal delete_path, @graph.process_nodes({ 'A' => { 'B' => nil } }, @graph.nodes)
-
-    # Delete node
-    assert_equal delete_node, @graph.process_nodes({ 'A' => nil }, @graph.nodes)
+    assert_equal updated_path, @graph.process_nodes({ 'A' => { 'B' => 20 } }, @graph.process_nodes(example_nodes))
   end
 end

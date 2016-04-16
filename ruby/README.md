@@ -11,6 +11,9 @@ ruby server.rb
 # or
 # curl -X POST -H "Content-Type: application/json" -d '{ "A": { "B": 80 } }' http://localhost:4567/
 # etc...
+
+# to run tests
+ruby tests/graph_test.rb
 ```
 
 ## Usage
