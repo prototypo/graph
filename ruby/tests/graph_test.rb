@@ -72,4 +72,51 @@ class TestGraph < MiniTest::Unit::TestCase
 
     assert_equal normalised, @graph.send(:normalise_nodes, example_nodes)
   end
+
+  def test_shortest_distance
+    @graph.load_nodes(example_nodes)
+
+    assert_equal 30, @graph.shortest_distance(@graph.nodes, 'A', 'C')
+  end
+
+  def test_mirror_paths
+    mirrored_paths = {
+        "A" => { "B" => 100, "C" => 30 },
+        "B" => { "F" => 300, "A" => 100 },
+        "F" => { "E" => 50, "G" => 70, "B" => 300 },
+        "E" => { "H" => 30, "G" => 150, "D" => 80, "F" => 50 },
+        "G" => { "H" => 50, "F" => 70, "E" => 150 },
+        "H" => { "D" => 90, "E" => 30, "G" => 50 },
+        "D" => { "E" => 80, "H" => 90, "C" => 200 },
+        "C" => { "D" => 200, "A" => 30 }
+      }
+
+    @graph.load_nodes(example_nodes)
+
+    assert_equal mirrored_paths, @graph.send(:mirror_paths, @graph.nodes)
+
+    nodes_with_burried_node = example_nodes.reject { |x| x.keys[0] == 'D' }
+
+    @graph.load_nodes(example_nodes)
+
+    assert_equal mirrored_paths, @graph.send(:mirror_paths, @graph.nodes)
+  end
+
+  def test_adjacency_matrix
+    adjacency_matrix = [
+        [0, 100, Float::INFINITY, Float::INFINITY, Float::INFINITY, Float::INFINITY, Float::INFINITY, 30],
+        [100, 0, 300, Float::INFINITY, Float::INFINITY, Float::INFINITY, Float::INFINITY, Float::INFINITY],
+        [Float::INFINITY, 300, 0, 50, 70, Float::INFINITY, Float::INFINITY, Float::INFINITY],
+        [Float::INFINITY, Float::INFINITY, 50, 0, 150, 30, 80, Float::INFINITY],
+        [Float::INFINITY, Float::INFINITY, 70, 150, 0, 50, Float::INFINITY, Float::INFINITY],
+        [Float::INFINITY, Float::INFINITY, Float::INFINITY, 30, 50, 0, 90, Float::INFINITY],
+        [Float::INFINITY, Float::INFINITY, Float::INFINITY, 80, Float::INFINITY, 90, 0, 200],
+        [30, Float::INFINITY, Float::INFINITY, Float::INFINITY, Float::INFINITY, Float::INFINITY, 200, 0]
+      ]
+
+    @graph.load_nodes(example_nodes)
+    numbered_nodes = @graph.send(:numbered_nodes, @graph.nodes)
+
+    assert_equal adjacency_matrix, @graph.send(:adjacency_matrix, @graph.nodes, numbered_nodes)
+  end
 end
