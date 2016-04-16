@@ -49,11 +49,9 @@ Calculating shortest distance:
 { "start":"A", "end":"F" }
 ```
 
-## I am aware of:
+## Problems I am aware of:
 - Reassignment to `@nodes` in `load_nodes` during merge.
-- The limitations of class variable storage (used for persistence).
-- Extra work done on finding the shortest path (out of spec).  Was useful for testing though.
-- A DP approach to the Floyd–Warshall Algo, should be recursive.  Would argue that the DP approach is best here though.
+- The limitations of the servers class variable storage (used for persistence).
 
 ## Feedback on the provided problem:
 - Some code example values do not match the problem text
