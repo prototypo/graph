@@ -178,4 +178,16 @@ class TestGraph < MiniTest::Unit::TestCase
 
     assert_equal updated_path, @graph.process_nodes({ 'A' => { 'B' => 20 } }, @graph.process_nodes(example_nodes))
   end
+
+  def test_numbered_nodes
+    numbered_nodes = { 0 => "A", 1 => "B", 2 => "F", 3 => "E", 4 => "G", 5 => "H", 6 => "D", 7 => "C" }
+
+    assert_equal numbered_nodes, @graph.send(:numbered_nodes, @graph.process_nodes(example_nodes))
+  end
+
+  def test_nodes_numbered
+    nodes_numbered = { "A" => 0, "B" => 1, "F" => 2, "E" => 3, "G" => 4, "H" => 5, "D" => 6, "C" => 7 }
+
+    assert_equal nodes_numbered, @graph.send(:nodes_numbered, @graph.process_nodes(example_nodes))
+  end
 end
