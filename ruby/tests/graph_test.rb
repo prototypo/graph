@@ -31,7 +31,7 @@ class TestGraph < MiniTest::Unit::TestCase
   end
 
   def test_floyd_warshall
-    @graph.load_nodes(example_nodes)
+    @graph.nodes = @graph.process_nodes(example_nodes)
     numbered_nodes = @graph.send(:numbered_nodes, @graph.nodes)
     nodes_numbered = @graph.send(:nodes_numbered, @graph.nodes)
     adjacency_matrix = @graph.send(:adjacency_matrix, @graph.nodes, numbered_nodes)
@@ -74,7 +74,7 @@ class TestGraph < MiniTest::Unit::TestCase
   end
 
   def test_shortest_distance
-    @graph.load_nodes(example_nodes)
+    @graph.nodes = @graph.process_nodes(example_nodes)
 
     assert_equal 30, @graph.shortest_distance(@graph.nodes, 'A', 'C')
   end
@@ -91,13 +91,13 @@ class TestGraph < MiniTest::Unit::TestCase
         "C" => { "D" => 200, "A" => 30 }
       }
 
-    @graph.load_nodes(example_nodes)
+    @graph.nodes = @graph.process_nodes(example_nodes)
 
     assert_equal mirrored_paths, @graph.send(:mirror_paths, @graph.nodes)
 
     nodes_with_burried_node = example_nodes.reject { |x| x.keys[0] == 'D' }
 
-    @graph.load_nodes(example_nodes)
+    @graph.nodes = @graph.process_nodes(example_nodes)
 
     assert_equal mirrored_paths, @graph.send(:mirror_paths, @graph.nodes)
   end
@@ -114,9 +114,68 @@ class TestGraph < MiniTest::Unit::TestCase
         [30, Float::INFINITY, Float::INFINITY, Float::INFINITY, Float::INFINITY, Float::INFINITY, 200, 0]
       ]
 
-    @graph.load_nodes(example_nodes)
+    @graph.nodes = @graph.process_nodes(example_nodes)
     numbered_nodes = @graph.send(:numbered_nodes, @graph.nodes)
 
     assert_equal adjacency_matrix, @graph.send(:adjacency_matrix, @graph.nodes, numbered_nodes)
+  end
+
+  def test_process_nodes
+    fresh_load = {
+        "A" => { "B" => 100, "C" => 30 },
+        "B" => { "F" => 300, "A" => 100 },
+        "F" => { "E" => 50, "G" => 70, "B" => 300 },
+        "E" => { "H" => 30, "G" => 150, "D" => 80, "F" => 50 },
+        "G" => { "H" => 50, "F" => 70, "E" => 150 },
+        "H" => { "D" => 90, "E" => 30, "G" => 50 },
+        "D" => { "E" => 80, "H" => 90, "C" => 200 },
+        "C" => { "D" => 200, "A" => 30 }
+      }
+
+    update = {
+        "A" => { "B" => 20, "C" => 30 },
+        "B" => { "F" => 300, "A" => 100 },
+        "F" => { "E" => 50, "G" => 70, "B" => 300 },
+        "E" => { "H" => 30, "G" => 150, "D" => 80, "F" => 50 },
+        "G" => { "H" => 50, "F" => 70, "E" => 150 },
+        "H" => { "D" => 90, "E" => 30, "G" => 50 },
+        "D" => { "E" => 80, "H" => 90, "C" => 200 },
+        "C" => { "D" => 200, "A" => 30 }
+      }
+
+    delete_path = {
+        "A" => { "C" => 30 },
+        "B" => { "F" => 300 },
+        "F" => { "E" => 50, "G" => 70, "B" => 300 },
+        "E" => { "H" => 30, "G" => 150, "D" => 80, "F" => 50 },
+        "G" => { "H" => 50, "F" => 70, "E" => 150 },
+        "H" => { "D" => 90, "E" => 30, "G" => 50 },
+        "D" => { "E" => 80, "H" => 90, "C" => 200 },
+        "C" => { "D" => 200, "A" => 30 }
+      }
+
+    delete_node = {
+        "B" => { "F" => 300 },
+        "F" => { "E" => 50, "G" => 70, "B" => 300 },
+        "E" => { "H" => 30, "G" => 150, "D" => 80, "F" => 50 },
+        "G" => { "H" => 50, "F" => 70, "E" => 150 },
+        "H" => { "D" => 90, "E" => 30, "G" => 50 },
+        "D" => { "E" => 80, "H" => 90, "C" => 200 },
+        "C" => { "D" => 200 }
+      }
+
+    @graph.nodes = @graph.process_nodes(example_nodes)
+
+    # Fresh load
+    assert_equal fresh_load, @graph.nodes
+
+    # Update
+    assert_equal update, @graph.process_nodes({ 'A' => { 'B' => 20 } }, @graph.nodes)
+
+    # Delete path
+    assert_equal delete_path, @graph.process_nodes({ 'A' => { 'B' => nil } }, @graph.nodes)
+
+    # Delete node
+    assert_equal delete_node, @graph.process_nodes({ 'A' => nil }, @graph.nodes)
   end
 end

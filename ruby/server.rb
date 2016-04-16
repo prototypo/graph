@@ -5,7 +5,7 @@ require './lib/graph'
 before do
   if !defined?(@@map)
     @@map = Graph.new
-    @@map.load_nodes([])
+    @@map.nodes = @@map.process_nodes([])
   end
 end
 
@@ -19,7 +19,7 @@ post '/' do
   end
 
   if data['map']
-    @@map.load_nodes(data['map'])
+    @@map.nodes = @map.process_nodes(data['map'])
 
     return @@map.nodes.to_json
 
@@ -33,7 +33,7 @@ post '/' do
     end
 
   else
-    @@map.load_nodes(data, true)
+    @@map.nodes = @@map.process_nodes(data, @@map.nodes)
 
     return @@map.nodes.to_json
   end

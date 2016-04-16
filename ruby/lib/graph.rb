@@ -3,8 +3,8 @@ require 'matrix'
 class Graph
   attr_accessor :nodes
 
-  def load_nodes(nodes, merge = false)
-    if merge
+  def process_nodes(nodes, existing_nodes = nil)
+    if existing_nodes
       if nodes.values.first == nil
         # Deleting nodes
         @nodes = @nodes.select { |k, v| k != nodes.keys.first }
@@ -15,11 +15,11 @@ class Graph
         @nodes = @nodes.map { |k, v| [k, v.reject { |sk, sv| sk == nodes.keys.first || sk == nodes.values.first.keys.first }] }.to_h
       else
         # Modifying paths
-        @nodes = @nodes.merge(mirror_paths(nodes)) { |k, old_nodes, new_nodes| old_nodes.merge(new_nodes) }
+        existing_nodes.merge(mirror_paths(nodes)) { |k, old_nodes, new_nodes| old_nodes.merge(new_nodes) }
       end
     else
       # Fresh loading nodes and paths
-      @nodes = mirror_paths(normalise_nodes(nodes))
+      mirror_paths(normalise_nodes(nodes))
     end
   end
 
