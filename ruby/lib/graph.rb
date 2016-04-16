@@ -37,17 +37,17 @@ class Graph
   end
 
   # https://en.wikipedia.org/wiki/Floyd–Warshall_algorithm
-  def floyd_warshall(graph, i, j)
+  def floyd_warshall(nodes, i, j)
     if i == j
       return 0
     end
 
     if i == j - 1
-      return graph[i][j]
+      return nodes[i][j]
     end
 
     return ((i + 1)...j).reduce(Float::INFINITY) do |max, k|
-      x = [graph[i][j], floyd_warshall(graph, i, k) + floyd_warshall(graph, k, j)].min
+      x = [nodes[i][j], floyd_warshall(nodes, i, k) + floyd_warshall(nodes, k, j)].min
 
       x < max ? x : max
     end
