@@ -23,7 +23,7 @@ class Graph
     nodes_numbered = nodes_numbered(nodes)
     numbered_nodes = numbered_nodes(nodes)
 
-    floyd_warshall(adjacency_matrix(nodes, numbered_nodes), nodes_numbered[start], nodes_numbered[finish])
+    floyd_warshall(adjacency_matrix(nodes, numbered_nodes), nodes_numbered[start], nodes_numbered[finish], nodes.size - 1)
   end
 
   def denormalise_nodes(nodes)
@@ -33,20 +33,16 @@ class Graph
   private
 
   # https://en.wikipedia.org/wiki/Floyd–Warshall_algorithm
-  def floyd_warshall(adjacency_matrix, i, j)
-    if i == j
-      return 0
-    end
-
-    if i == j - 1
+  def floyd_warshall(adjacency_matrix, i, j, k)
+    if k == 0
       return adjacency_matrix[i][j]
     end
 
-    return ((i + 1)...j).reduce(Float::INFINITY) do |max, k|
-      x = [adjacency_matrix[i][j], floyd_warshall(adjacency_matrix, i, k) + floyd_warshall(adjacency_matrix, k, j)].min
+    a = floyd_warshall(adjacency_matrix, i, j, k - 1)
+    b = floyd_warshall(adjacency_matrix, i, k, k - 1)
+    c = floyd_warshall(adjacency_matrix, k, j, k - 1)
 
-      x < max ? x : max
-    end
+    [a, (b + c)].min
   end
 
   def mirror_paths(nodes)
