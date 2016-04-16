@@ -1,7 +1,6 @@
 require 'sinatra'
 require 'json'
 require './lib/graph'
-require 'awesome_print'
 
 before do
   if !defined?(@@map)
