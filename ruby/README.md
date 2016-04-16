@@ -54,6 +54,7 @@ Calculating shortest distance:
 
 ## Problems I am aware of:
 - The limitations of the servers class variable storage (used for persistence).
+- Lack of depth in deleting nodes and paths
 
 ## Feedback on the provided problem:
 - Some code example values do not match the problem text
