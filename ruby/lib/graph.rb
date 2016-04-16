@@ -34,6 +34,19 @@ class Graph
     end
   end
 
+  def shortest_distance(nodes, start, finish)
+    nodes_numbered = nodes_numbered(nodes)
+    numbered_nodes = numbered_nodes(nodes)
+
+    floyd_warshall(adjacency_matrix(nodes, numbered_nodes), nodes_numbered[start], nodes_numbered[finish])
+  end
+
+  def denormalise_nodes(nodes)
+    nodes.map { |k, v| [k => v] }.flatten
+  end
+
+  private
+
   # https://en.wikipedia.org/wiki/Floyd–Warshall_algorithm
   def floyd_warshall(nodes, i, j)
     if i == j
@@ -50,19 +63,6 @@ class Graph
       x < max ? x : max
     end
   end
-
-  def shortest_distance(nodes, start, finish)
-    nodes_numbered = nodes_numbered(nodes)
-    numbered_nodes = numbered_nodes(nodes)
-
-    floyd_warshall(adjacency_matrix(nodes, numbered_nodes), nodes_numbered[start], nodes_numbered[finish])
-  end
-
-  def denormalise_nodes(nodes)
-    nodes.map { |k, v| [k => v] }.flatten
-  end
-
-  private
 
   def mirror_paths(nodes)
     burried_nodes = Hash[nodes.keys.map { |x| [x, {}] }]
