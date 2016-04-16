@@ -37,9 +37,39 @@ class TestGraph < MiniTest::Unit::TestCase
     adjacency_matrix = @graph.send(:adjacency_matrix, @graph.nodes, numbered_nodes)
 
     assert_equal 30, @graph.send(:floyd_warshall, adjacency_matrix, nodes_numbered['A'], nodes_numbered['C'])
-    assert_equal 30, @graph.send(:floyd_warshall, adjacency_matrix, nodes_numbered['A'], nodes_numbered['D'])
-    assert_equal 30, @graph.send(:floyd_warshall, adjacency_matrix, nodes_numbered['A'], nodes_numbered['A'])
-    assert_equal 30, @graph.send(:floyd_warshall, adjacency_matrix, nodes_numbered['D'], nodes_numbered['A'])
-    assert_equal 30, @graph.send(:floyd_warshall, adjacency_matrix, nodes_numbered['A'], nodes_numbered['F'])
+    assert_equal 230, @graph.send(:floyd_warshall, adjacency_matrix, nodes_numbered['A'], nodes_numbered['D'])
+    assert_equal 0, @graph.send(:floyd_warshall, adjacency_matrix, nodes_numbered['A'], nodes_numbered['A'])
+    assert_equal 230, @graph.send(:floyd_warshall, adjacency_matrix, nodes_numbered['D'], nodes_numbered['A'])
+    assert_equal 360, @graph.send(:floyd_warshall, adjacency_matrix, nodes_numbered['A'], nodes_numbered['F'])
+  end
+
+  def test_denormalise_nodes
+    denormalised = [
+        { "A" => { "B" => 100, "C" => 30 } },
+        { "B" => { "F" => 300 } },
+        { "F" => { "E" => 50, "G" => 70 } },
+        { "E" => { "H" => 30, "G" => 150, "D" => 80 } },
+        { "G" => { "H" => 50 } },
+        { "H" => { "D" => 90 } },
+        { "D" => {} },
+        { "C" => { "D" => 200 } }
+      ]
+
+    assert_equal denormalised, @graph.denormalise_nodes(@graph.send(:normalise_nodes, example_nodes))
+  end
+
+  def test_normalise_nodes
+    normalised = {
+        "A" => { "B" => 100, "C" => 30 },
+        "B" => { "F" => 300 },
+        "F" => { "E" => 50, "G" => 70 },
+        "E" => { "H" => 30, "G" => 150, "D" => 80 },
+        "G" => { "H" => 50 },
+        "H" => { "D" => 90 },
+        "D" => {},
+        "C" => { "D" => 200 }
+      }
+
+    assert_equal normalised, @graph.send(:normalise_nodes, example_nodes)
   end
 end
