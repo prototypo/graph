@@ -1,8 +1,11 @@
 
 ## Installation
 ```
+# Have Ruby installed.  I am using 2.3.0 at time of writing.
+ruby -v
+
 git clone git@github.com:rcaught/graph.git
-cd Graph/ruby/
+cd graph/ruby/
 gem install sinatra awesome_print
 
 ruby server.rb
@@ -32,6 +35,11 @@ Fresh loading map data:
 }
 ```
 
+Calculating shortest distance:
+```
+{ "start":"A", "end":"F" }
+```
+
 Modifying / adding map data:
 ```
 { "A": { "B": 80 } } 
@@ -47,14 +55,6 @@ Deleting nodes:
 { "A": null }
 ```
 
-Calculating shortest distance:
-```
-{ "start":"A", "end":"F" }
-```
-
 ## Problems I am aware of:
 - The limitations of the servers class variable storage (used for persistence).
 - Lack of depth in deleting nodes and paths
-
-## Feedback on the provided problem:
-- Some code example values do not match the problem text
