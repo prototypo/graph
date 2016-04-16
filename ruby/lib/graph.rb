@@ -71,7 +71,10 @@ class Graph
   end
 
   def shortest_distance(nodes, start, finish)
-    floyd_warshall(adjacency_matrix(nodes), nodes_numbered(nodes)[start], nodes_numbered(nodes)[finish])
+    nodes_numbered = nodes_numbered(nodes)
+    numbered_nodes = numbered_nodes(nodes)
+
+    floyd_warshall(adjacency_matrix(nodes, numbered_nodes), nodes_numbered[start], nodes_numbered[finish])
   end
 
   def denormalise_nodes(nodes)
@@ -116,9 +119,8 @@ class Graph
     Hash[nodes.map { |x| [x.keys.first, x.values.first] }]
   end
 
-  def adjacency_matrix(nodes)
+  def adjacency_matrix(nodes, numbered_nodes)
     adjacency_matrix = Matrix.build(nodes.keys.size) { Float::INFINITY }.to_a
-    numbered_nodes = numbered_nodes(nodes)
 
     adjacency_matrix.map.with_index do |row, row_i|
       row.map.with_index do |x, col_i|
