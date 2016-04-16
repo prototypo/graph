@@ -48,17 +48,17 @@ class Graph
   private
 
   # https://en.wikipedia.org/wiki/Floyd–Warshall_algorithm
-  def floyd_warshall(nodes, i, j)
+  def floyd_warshall(adjacency_matrix, i, j)
     if i == j
       return 0
     end
 
     if i == j - 1
-      return nodes[i][j]
+      return adjacency_matrix[i][j]
     end
 
     return ((i + 1)...j).reduce(Float::INFINITY) do |max, k|
-      x = [nodes[i][j], floyd_warshall(nodes, i, k) + floyd_warshall(nodes, k, j)].min
+      x = [adjacency_matrix[i][j], floyd_warshall(adjacency_matrix, i, k) + floyd_warshall(adjacency_matrix, k, j)].min
 
       x < max ? x : max
     end
