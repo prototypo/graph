@@ -99,7 +99,12 @@ class Graph
   end
 
   def delete_path(nodes, existing_nodes)
-    existing_nodes.map { |k, v| [k, v.reject { |sk, sv| sk == nodes.keys.first || sk == nodes.values.first.keys.first }] }.to_h
+    existing_nodes.map { |k, v| [k, v.reject { |sk, sv|
+        sub_origin = nodes.keys.first
+        sub_destination = nodes.values.first.keys.first
+
+        (k == sub_destination || k == sub_origin) && (sk == sub_origin || sk == sub_destination)
+      }] }.to_h
   end
 
   def update_path(nodes, existing_nodes)
