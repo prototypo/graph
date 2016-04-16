@@ -1,6 +1,7 @@
 require 'sinatra'
 require 'json'
 require './lib/graph'
+require 'ap'
 
 before do
   if !defined?(@@map)
@@ -19,7 +20,7 @@ post '/' do
   end
 
   if data['map']
-    @@map.nodes = @map.process_nodes(data['map'])
+    @@map.nodes = @@map.process_nodes(data['map'])
 
     return @@map.nodes.to_json
 

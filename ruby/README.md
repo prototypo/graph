@@ -2,8 +2,8 @@
 ## Installation
 ```
 git clone git@github.com:rcaught/graph.git
-cd ruby/
-gem install sinatra
+cd Graph/ruby/
+gem install sinatra awesome_print
 
 ruby server.rb
 
@@ -53,7 +53,6 @@ Calculating shortest distance:
 ```
 
 ## Problems I am aware of:
-- Reassignment to `@nodes` in `load_nodes` during merge.
 - The limitations of the servers class variable storage (used for persistence).
 
 ## Feedback on the provided problem:
