@@ -56,14 +56,22 @@ class Graph
   end
 
   def mirror_paths(nodes)
-    burried_nodes = nodes.keys.map { |x| [x, {}] }.to_h
+    all_nodes = all_nodes(nodes).map { |x| [x, {}] }.to_h
 
-    burried_nodes.merge(nodes).to_a.map { |node|
+    all_nodes.merge(nodes).to_a.map { |node|
       mergeable = nodes.select { |x| nodes[x].keys.include?(node[0]) }
                        .map { |k, v| [k, v[node[0]]] }.to_h
 
       [node[0], node[1].merge(mergeable)]
     }.to_h
+  end
+
+  def all_nodes(nodes)
+    nodes.each_with_object([]) do |(k,v), keys|
+      keys << k
+
+      keys.concat(all_nodes(v)) if v.is_a? Hash
+    end
   end
 
   def normalise_nodes(nodes)

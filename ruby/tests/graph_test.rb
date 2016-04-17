@@ -36,11 +36,11 @@ class TestGraph < MiniTest::Unit::TestCase
     nodes_numbered = @graph.send(:nodes_numbered, @graph.nodes)
     adjacency_matrix = @graph.send(:adjacency_matrix, @graph.nodes, numbered_nodes)
 
-    assert_equal [30, [0, 7]], @graph.send(:floyd_warshall, adjacency_matrix, nodes_numbered['A'], nodes_numbered['C'])
-    assert_equal [230, [0, 7, 6]], @graph.send(:floyd_warshall, adjacency_matrix, nodes_numbered['A'], nodes_numbered['D'])
+    assert_equal [30, [0, 2]], @graph.send(:floyd_warshall, adjacency_matrix, nodes_numbered['A'], nodes_numbered['C'])
+    assert_equal [230, [0, 2, 7]], @graph.send(:floyd_warshall, adjacency_matrix, nodes_numbered['A'], nodes_numbered['D'])
     assert_equal [0, [0, 0]], @graph.send(:floyd_warshall, adjacency_matrix, nodes_numbered['A'], nodes_numbered['A'])
-    assert_equal [230, [6, 7, 0]], @graph.send(:floyd_warshall, adjacency_matrix, nodes_numbered['D'], nodes_numbered['A'])
-    assert_equal [360, [0, 7, 6, 3, 2]], @graph.send(:floyd_warshall, adjacency_matrix, nodes_numbered['A'], nodes_numbered['F'])
+    assert_equal [230, [7, 2, 0]], @graph.send(:floyd_warshall, adjacency_matrix, nodes_numbered['D'], nodes_numbered['A'])
+    assert_equal [360, [0, 2, 7, 4, 3]], @graph.send(:floyd_warshall, adjacency_matrix, nodes_numbered['A'], nodes_numbered['F'])
   end
 
   def test_denormalise_nodes
@@ -105,23 +105,34 @@ class TestGraph < MiniTest::Unit::TestCase
 
     assert_equal mirrored_paths, @graph.send(:mirror_paths, @graph.nodes)
 
-    nodes_with_burried_node = example_nodes.reject { |x| x.keys[0] == 'D' }
+    nodes_with_buried_node = example_nodes.reject { |x| x.keys[0] == 'D' }
 
-    @graph.nodes = @graph.process_nodes(nodes_with_burried_node)
+    @graph.nodes = @graph.process_nodes(nodes_with_buried_node)
 
     assert_equal mirrored_paths, @graph.send(:mirror_paths, @graph.nodes)
   end
 
+  def test_all_nodes
+    example = {
+        "A" => { "B" => 100, "C" => 30 },
+        "D" => { "E" => { "F" => { "G" => 20} } }
+      }
+
+    result = ['A', 'B', 'C', 'D', 'E', 'F', 'G']
+
+    assert_equal result, @graph.send(:all_nodes, example)
+  end
+
   def test_adjacency_matrix
     adjacency_matrix = [
-        [0, 100, Float::INFINITY, Float::INFINITY, Float::INFINITY, Float::INFINITY, Float::INFINITY, 30],
-        [100, 0, 300, Float::INFINITY, Float::INFINITY, Float::INFINITY, Float::INFINITY, Float::INFINITY],
-        [Float::INFINITY, 300, 0, 50, 70, Float::INFINITY, Float::INFINITY, Float::INFINITY],
-        [Float::INFINITY, Float::INFINITY, 50, 0, 150, 30, 80, Float::INFINITY],
-        [Float::INFINITY, Float::INFINITY, 70, 150, 0, 50, Float::INFINITY, Float::INFINITY],
-        [Float::INFINITY, Float::INFINITY, Float::INFINITY, 30, 50, 0, 90, Float::INFINITY],
-        [Float::INFINITY, Float::INFINITY, Float::INFINITY, 80, Float::INFINITY, 90, 0, 200],
-        [30, Float::INFINITY, Float::INFINITY, Float::INFINITY, Float::INFINITY, Float::INFINITY, 200, 0]
+        [0, 100, 30, Float::INFINITY, Float::INFINITY, Float::INFINITY, Float::INFINITY, Float::INFINITY],
+        [100, 0, Float::INFINITY, 300, Float::INFINITY, Float::INFINITY, Float::INFINITY, Float::INFINITY],
+        [30, Float::INFINITY, 0, Float::INFINITY, Float::INFINITY, Float::INFINITY, Float::INFINITY, 200],
+        [Float::INFINITY, 300, Float::INFINITY, 0, 50, 70, Float::INFINITY, Float::INFINITY],
+        [Float::INFINITY, Float::INFINITY, Float::INFINITY, 50, 0, 150, 30, 80],
+        [Float::INFINITY, Float::INFINITY, Float::INFINITY, 70, 150, 0, 50, Float::INFINITY],
+        [Float::INFINITY, Float::INFINITY, Float::INFINITY, Float::INFINITY, 30, 50, 0, 90],
+        [Float::INFINITY, Float::INFINITY, 200, Float::INFINITY, 80, Float::INFINITY, 90, 0]
       ]
 
     @graph.nodes = @graph.process_nodes(example_nodes)
@@ -190,13 +201,13 @@ class TestGraph < MiniTest::Unit::TestCase
   end
 
   def test_numbered_nodes
-    numbered_nodes = { 0 => "A", 1 => "B", 2 => "F", 3 => "E", 4 => "G", 5 => "H", 6 => "D", 7 => "C" }
+    numbered_nodes = { 0 => "A", 1 => "B", 2 => "C", 3 => "F", 4 => "E", 5 => "G", 6 => "H", 7 => "D" }
 
     assert_equal numbered_nodes, @graph.send(:numbered_nodes, @graph.process_nodes(example_nodes))
   end
 
   def test_nodes_numbered
-    nodes_numbered = { "A" => 0, "B" => 1, "F" => 2, "E" => 3, "G" => 4, "H" => 5, "D" => 6, "C" => 7 }
+    nodes_numbered = { "A" => 0, "B" => 1, "C" => 2, "F" => 3, "E" => 4, "G" => 5, "H" => 6, "D" => 7 }
 
     assert_equal nodes_numbered, @graph.send(:nodes_numbered, @graph.process_nodes(example_nodes))
   end
