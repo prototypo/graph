@@ -33,8 +33,8 @@ class Graph
   private
 
   # https://en.wikipedia.org/wiki/Floyd–Warshall_algorithm
-  def floyd_warshall(adjacency_matrix, i, j, k = nil)
-    k ||= adjacency_matrix[0].size - 1
+  def floyd_warshall(adjacency_matrix, i, j, kn = nil)
+    k = kn == nil ? adjacency_matrix[0].size - 1 : kn
 
     if k == 0
       return adjacency_matrix[i][j]
