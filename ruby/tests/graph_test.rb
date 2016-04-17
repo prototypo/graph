@@ -36,11 +36,11 @@ class TestGraph < MiniTest::Unit::TestCase
     nodes_numbered = @graph.send(:nodes_numbered, @graph.nodes)
     adjacency_matrix = @graph.send(:adjacency_matrix, @graph.nodes, numbered_nodes)
 
-    assert_equal 30, @graph.send(:floyd_warshall, adjacency_matrix, nodes_numbered['A'], nodes_numbered['C'], @graph.nodes.size - 1)
-    assert_equal 230, @graph.send(:floyd_warshall, adjacency_matrix, nodes_numbered['A'], nodes_numbered['D'], @graph.nodes.size - 1)
-    assert_equal 0, @graph.send(:floyd_warshall, adjacency_matrix, nodes_numbered['A'], nodes_numbered['A'], @graph.nodes.size - 1)
-    assert_equal 230, @graph.send(:floyd_warshall, adjacency_matrix, nodes_numbered['D'], nodes_numbered['A'], @graph.nodes.size - 1)
-    assert_equal 360, @graph.send(:floyd_warshall, adjacency_matrix, nodes_numbered['A'], nodes_numbered['F'], @graph.nodes.size - 1)
+    assert_equal 30, @graph.send(:floyd_warshall, adjacency_matrix, nodes_numbered['A'], nodes_numbered['C'])
+    assert_equal 230, @graph.send(:floyd_warshall, adjacency_matrix, nodes_numbered['A'], nodes_numbered['D'])
+    assert_equal 0, @graph.send(:floyd_warshall, adjacency_matrix, nodes_numbered['A'], nodes_numbered['A'])
+    assert_equal 230, @graph.send(:floyd_warshall, adjacency_matrix, nodes_numbered['D'], nodes_numbered['A'])
+    assert_equal 360, @graph.send(:floyd_warshall, adjacency_matrix, nodes_numbered['A'], nodes_numbered['F'])
   end
 
   def test_denormalise_nodes

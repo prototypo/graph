@@ -23,7 +23,7 @@ class Graph
     nodes_numbered = nodes_numbered(nodes)
     numbered_nodes = numbered_nodes(nodes)
 
-    floyd_warshall(adjacency_matrix(nodes, numbered_nodes), nodes_numbered[start], nodes_numbered[finish], nodes.size - 1)
+    floyd_warshall(adjacency_matrix(nodes, numbered_nodes), nodes_numbered[start], nodes_numbered[finish])
   end
 
   def denormalise_nodes(nodes)
@@ -33,7 +33,9 @@ class Graph
   private
 
   # https://en.wikipedia.org/wiki/Floyd–Warshall_algorithm
-  def floyd_warshall(adjacency_matrix, i, j, k)
+  def floyd_warshall(adjacency_matrix, i, j, k = nil)
+    k ||= adjacency_matrix[0].size - 1
+
     if k == 0
       return adjacency_matrix[i][j]
     end
