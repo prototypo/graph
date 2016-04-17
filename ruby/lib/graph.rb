@@ -56,21 +56,18 @@ class Graph
   end
 
   def mirror_paths(nodes)
-    burried_nodes = Hash[nodes.keys.map { |x| [x, {}] }]
+    burried_nodes = nodes.keys.map { |x| [x, {}] }.to_h
 
-    Hash[burried_nodes.merge(nodes).to_a.map do |node|
-      mergeable = Hash[nodes.select do |x|
-        nodes[x].keys.include?(node[0])
-      end.map do |k, v|
-        [k, v[node[0]]]
-      end]
+    burried_nodes.merge(nodes).to_a.map { |node|
+      mergeable = nodes.select { |x| nodes[x].keys.include?(node[0]) }
+                       .map { |k, v| [k, v[node[0]]] }.to_h
 
       [node[0], node[1].merge(mergeable)]
-    end]
+    }.to_h
   end
 
   def normalise_nodes(nodes)
-    Hash[nodes.map { |x| [x.keys.first, x.values.first] }]
+    nodes.map { |x| [x.keys.first, x.values.first] }.to_h
   end
 
   def adjacency_matrix(nodes, numbered_nodes)
