@@ -23,7 +23,15 @@ class Graph
     nodes_numbered = nodes_numbered(nodes)
     numbered_nodes = numbered_nodes(nodes)
 
-    floyd_warshall(adjacency_matrix(nodes, numbered_nodes), nodes_numbered[start], nodes_numbered[finish])
+    floyd_warshall(adjacency_matrix(nodes, numbered_nodes), nodes_numbered[start], nodes_numbered[finish])[0]
+  end
+
+  def shortest_path(nodes, start, finish)
+    nodes_numbered = nodes_numbered(nodes)
+    numbered_nodes = numbered_nodes(nodes)
+
+    result = floyd_warshall(adjacency_matrix(nodes, numbered_nodes), nodes_numbered[start], nodes_numbered[finish])[1]
+    result.map { |x| numbered_nodes[x] }
   end
 
   def denormalise_nodes(nodes)
@@ -37,14 +45,14 @@ class Graph
     k = kn == nil ? adjacency_matrix[0].size - 1 : kn
 
     if k == 0
-      return adjacency_matrix[i][j]
+      return [adjacency_matrix[i][j], [i, j]]
     end
 
     a = floyd_warshall(adjacency_matrix, i, j, k - 1)
     b = floyd_warshall(adjacency_matrix, i, k, k - 1)
     c = floyd_warshall(adjacency_matrix, k, j, k - 1)
 
-    [a, (b + c)].min
+    [a, [b[0] + c[0], b[1] | c[1]]].min_by { |x| x[0] }
   end
 
   def mirror_paths(nodes)

@@ -36,11 +36,11 @@ class TestGraph < MiniTest::Unit::TestCase
     nodes_numbered = @graph.send(:nodes_numbered, @graph.nodes)
     adjacency_matrix = @graph.send(:adjacency_matrix, @graph.nodes, numbered_nodes)
 
-    assert_equal 30, @graph.send(:floyd_warshall, adjacency_matrix, nodes_numbered['A'], nodes_numbered['C'])
-    assert_equal 230, @graph.send(:floyd_warshall, adjacency_matrix, nodes_numbered['A'], nodes_numbered['D'])
-    assert_equal 0, @graph.send(:floyd_warshall, adjacency_matrix, nodes_numbered['A'], nodes_numbered['A'])
-    assert_equal 230, @graph.send(:floyd_warshall, adjacency_matrix, nodes_numbered['D'], nodes_numbered['A'])
-    assert_equal 360, @graph.send(:floyd_warshall, adjacency_matrix, nodes_numbered['A'], nodes_numbered['F'])
+    assert_equal [30, [0, 7]], @graph.send(:floyd_warshall, adjacency_matrix, nodes_numbered['A'], nodes_numbered['C'])
+    assert_equal [230, [0, 7, 6]], @graph.send(:floyd_warshall, adjacency_matrix, nodes_numbered['A'], nodes_numbered['D'])
+    assert_equal [0, [0, 0]], @graph.send(:floyd_warshall, adjacency_matrix, nodes_numbered['A'], nodes_numbered['A'])
+    assert_equal [230, [6, 7, 0]], @graph.send(:floyd_warshall, adjacency_matrix, nodes_numbered['D'], nodes_numbered['A'])
+    assert_equal [360, [0, 7, 6, 3, 2]], @graph.send(:floyd_warshall, adjacency_matrix, nodes_numbered['A'], nodes_numbered['F'])
   end
 
   def test_denormalise_nodes
@@ -77,6 +77,16 @@ class TestGraph < MiniTest::Unit::TestCase
     @graph.nodes = @graph.process_nodes(example_nodes)
 
     assert_equal 30, @graph.shortest_distance(@graph.nodes, 'A', 'C')
+    assert_equal 230, @graph.shortest_distance(@graph.nodes, 'A', 'D')
+    assert_equal 230, @graph.shortest_distance(@graph.nodes, 'D', 'A')
+  end
+
+  def test_shortest_path
+    @graph.nodes = @graph.process_nodes(example_nodes)
+
+    assert_equal ['A', 'C'], @graph.shortest_path(@graph.nodes, 'A', 'C')
+    assert_equal ['A', 'C', 'D'], @graph.shortest_path(@graph.nodes, 'A', 'D')
+    assert_equal ['D', 'C', 'A'], @graph.shortest_path(@graph.nodes, 'D', 'A')
   end
 
   def test_mirror_paths
