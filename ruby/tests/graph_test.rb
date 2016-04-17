@@ -107,7 +107,7 @@ class TestGraph < MiniTest::Unit::TestCase
 
     nodes_with_burried_node = example_nodes.reject { |x| x.keys[0] == 'D' }
 
-    @graph.nodes = @graph.process_nodes(example_nodes)
+    @graph.nodes = @graph.process_nodes(nodes_with_burried_node)
 
     assert_equal mirrored_paths, @graph.send(:mirror_paths, @graph.nodes)
   end
@@ -177,7 +177,7 @@ class TestGraph < MiniTest::Unit::TestCase
   def test_update_path
     updated_path = {
         "A" => { "B" => 20, "C" => 30 },
-        "B" => { "F" => 300, "A" => 100 },
+        "B" => { "F" => 300, "A" => 20 },
         "F" => { "E" => 50, "G" => 70, "B" => 300 },
         "E" => { "H" => 30, "G" => 150, "D" => 80, "F" => 50 },
         "G" => { "H" => 50, "F" => 70, "E" => 150 },
