@@ -21,18 +21,22 @@ class Graph
   end
 
   def shortest_distance(nodes, start, finish)
-    nodes_numbered = nodes_numbered(nodes)
-    numbered_nodes = numbered_nodes(nodes)
+    dijkstras(nodes, [[0, [start]]], finish)[0]
 
-    floyd_warshall(adjacency_matrix(nodes, numbered_nodes), nodes_numbered[start], nodes_numbered[finish])[0]
+    # nodes_numbered = nodes_numbered(nodes)
+    # numbered_nodes = numbered_nodes(nodes)
+
+    # floyd_warshall(adjacency_matrix(nodes, numbered_nodes), nodes_numbered[start], nodes_numbered[finish])[0]
   end
 
   def shortest_path(nodes, start, finish)
-    nodes_numbered = nodes_numbered(nodes)
-    numbered_nodes = numbered_nodes(nodes)
+    dijkstras(nodes, [[0, [start]]], finish)[1]
 
-    result = floyd_warshall(adjacency_matrix(nodes, numbered_nodes), nodes_numbered[start], nodes_numbered[finish])[1]
-    result.map { |x| numbered_nodes[x] }
+    # nodes_numbered = nodes_numbered(nodes)
+    # numbered_nodes = numbered_nodes(nodes)
+
+    # result = floyd_warshall(adjacency_matrix(nodes, numbered_nodes), nodes_numbered[start], nodes_numbered[finish])[1]
+    # result.map { |x| numbered_nodes[x] }
   end
 
   def denormalise_nodes(nodes)
