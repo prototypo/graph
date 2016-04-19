@@ -1,4 +1,5 @@
 require 'matrix'
+require 'set'
 
 class Graph
   attr_accessor :nodes
@@ -53,6 +54,26 @@ class Graph
     c = floyd_warshall(adjacency_matrix, k, j, k - 1)
 
     [a, [b[0] + c[0], b[1] | c[1]]].min_by { |x| x[0] }
+  end
+
+  def dijkstras(nodes, i, j, visited = Set.new)
+    current = i[0]
+    rest = i.slice(1..-1)
+
+    current_distance = current[0]
+    current_path = current[1]
+
+    key = current_path[0]
+    path_rest = current_path.slice(1..-1)
+
+    if key == j
+      [current_distance, current_path.reverse]
+    else
+      paths = nodes[key].map { |k, d| !visited.include?(k) ? [current_distance + d, [k] + current_path] : nil }.compact
+      sorted_paths = (paths + rest).sort { |a, b| a[0] <=> b[0] }
+
+      dijkstras(nodes, sorted_paths, j, visited + [key])
+    end
   end
 
   def mirror_paths(nodes)

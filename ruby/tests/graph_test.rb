@@ -43,6 +43,19 @@ class TestGraph < MiniTest::Unit::TestCase
     assert_equal [360, [0, 2, 7, 4, 3]], @graph.send(:floyd_warshall, adjacency_matrix, nodes_numbered['A'], nodes_numbered['F'])
   end
 
+  def test_dijkstras
+    @graph.nodes = @graph.process_nodes(example_nodes)
+    numbered_nodes = @graph.send(:numbered_nodes, @graph.nodes)
+    nodes_numbered = @graph.send(:nodes_numbered, @graph.nodes)
+    adjacency_matrix = @graph.send(:adjacency_matrix, @graph.nodes, numbered_nodes)
+
+    assert_equal [30, ['A', 'C']], @graph.send(:dijkstras, @graph.nodes, [[0, ['A']]], 'C')
+    assert_equal [230, ['A', 'C', 'D']], @graph.send(:dijkstras, @graph.nodes, [[0, ['A']]], 'D')
+    assert_equal [0, ['A']], @graph.send(:dijkstras, @graph.nodes, [[0, ['A']]], 'A')
+    assert_equal [230, ['D', 'C', 'A']], @graph.send(:dijkstras, @graph.nodes, [[0, ['D']]], 'A')
+    assert_equal [360, ['A', 'C', 'D', 'E', 'F']], @graph.send(:dijkstras, @graph.nodes, [[0, ['A']]], 'F')
+  end
+
   def test_denormalise_nodes
     denormalised = [
         { "A" => { "B" => 100, "C" => 30 } },
