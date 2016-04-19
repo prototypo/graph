@@ -67,10 +67,12 @@ class Graph
   end
 
   def all_nodes(nodes)
-    nodes.each_with_object([]) do |(k,v), keys|
-      keys << k
-
-      keys.concat(all_nodes(v)) if v.is_a? Hash
+    nodes.reduce([]) do |memo, (k, v)|
+      if !v.values.first.is_a?(Hash)
+        memo + [k] + v.keys
+      else
+        memo + [k] + v.keys + all_nodes(v.values.first)
+      end
     end
   end
 

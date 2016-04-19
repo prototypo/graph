@@ -115,10 +115,10 @@ class TestGraph < MiniTest::Unit::TestCase
   def test_all_nodes
     example = {
         "A" => { "B" => 100, "C" => 30 },
-        "D" => { "E" => { "F" => { "G" => 20} } }
+        "D" => { "E" => { "F" => { "G" => 20}, "H" => { "I" => { "J" => { "K" => 10 } } } } }
       }
 
-    result = ['A', 'B', 'C', 'D', 'E', 'F', 'G']
+    result = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K']
 
     assert_equal result, @graph.send(:all_nodes, example)
   end
